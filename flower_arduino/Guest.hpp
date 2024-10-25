@@ -13,14 +13,8 @@
 class Guest : public Game
 {
   public:
-    Guest();
-    virtual ~Guest();
-
     void init_wifi(const char *ssid, const char *password);
-    void update();
-
-  private:
-
+    void start();
 };
 
 #endif 

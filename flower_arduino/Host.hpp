@@ -15,15 +15,9 @@
 class Host : public Game
 {
         public:
-                Host();
-                virtual ~Host();
-
                 WiFiServer server = WiFiServer(80);
                 void init_wifi(const char *ssid, const char *password);
-                void update();
-
-        private:
-
+                void start();
 };
 
 #endif 

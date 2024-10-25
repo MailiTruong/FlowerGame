@@ -22,8 +22,7 @@ char hexaKeys[ROWS][COLS] = {
 byte rowPins[ROWS] = { 20, 10, 0 };
 byte colPins[COLS] = { 7, 8, 1 };
 
-//initialize an instance of class NewKeypad
-Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
+Keypad keypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS);
 
 Game *game;
 
@@ -56,7 +55,7 @@ void setup()
 
         while(1)
         {
-                anwser = customKeypad.getKey();
+                anwser = keypad.getKey();
                 if (anwser == 'A' || anwser == 'B') break;
                 delay(100);
         }
@@ -75,7 +74,7 @@ void setup()
                 {
                         display.clearDisplay();
 
-                        char key = customKeypad.getKey();
+                        char key = keypad.getKey();
 
                         if (key == 'D' || key == 'U')
                         {
@@ -109,8 +108,7 @@ void setup()
                                         }
 
                                         game = new Guest();
-                                        game->display = &display;
-                                        game->keypad = &customKeypad;
+                                        game->init(&display, &keypad);
                                         game->init_wifi(name, code);
                                         break;
                                 }
@@ -135,7 +133,7 @@ void setup()
                 {
                         display.clearDisplay();
 
-                        char key = customKeypad.getKey();
+                        char key = keypad.getKey();
 
                         if (key == 'B' || key == 'A')
                         {
@@ -158,9 +156,9 @@ void setup()
                                 }
 
                                 code[8] = '\0';
+
                                 game = new Host();
-                                game->display = &display;
-                                game->keypad = &customKeypad;
+                                game->init(&display, &keypad);
                                 game->init_wifi(name, code);
                                 break;
                         }
@@ -181,7 +179,7 @@ void setup()
 
                 while(1)
                 {
-                        char key = customKeypad.getKey();
+                        char key = keypad.getKey();
                         if (key == 'S') break;
                         delay(100);
                 }
@@ -195,5 +193,5 @@ void loop()
         display.println("Loading...");
         display.display();
 
-        game->update();
+        game->start();
 }

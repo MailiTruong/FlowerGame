@@ -6,21 +6,11 @@
 
 #include "Guest.hpp"
 
-
-Guest::Guest() : Game()
-{
-
-}
-
-Guest::~Guest()
-{
-}
-
 void Guest::init_wifi(const char *ssid, const char *password)
 {
-        WiFi.begin(ssid, password);
+        player = Player::GUEST;
 
-        type_of_player = Player::GUEST;
+        WiFi.begin(ssid, password);
 
         while (WiFi.status() != WL_CONNECTED) 
         {
@@ -32,12 +22,12 @@ void Guest::init_wifi(const char *ssid, const char *password)
 }
 
 
-void Guest::update()
+void Guest::start()
 {
         WiFiClient client;
 
         if (client.connect("flower.local", 80)) {
-                oponnent = &client;
+                opponent = &client;
                 client.println("Hello from client!");
                 Game::init();
 
@@ -46,7 +36,7 @@ void Guest::update()
                                 String response = client.readStringUntil('\n');
                                 Serial.println("Response: " + response);
 
-                                Game::callback(response.c_str());
+                                Game::tcp_callback(response.c_str());
                         }
 
                         Game::update();

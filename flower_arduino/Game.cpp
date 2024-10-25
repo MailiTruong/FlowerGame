@@ -6,20 +6,12 @@
 
 #include "Game.hpp"
 #include <cstring>
+#include <cmath>
 
-Game::Game()
+void Game::init(Adafruit_SSD1306 *display, Keypad *keypad)
 {
-
-}
-
-Game::~Game()
-{
-
-}
-
-void Game::init()
-{
-
+        this->display = display;
+        this->keypad = keypad;
 }
 
 void Game::update()
@@ -31,9 +23,9 @@ void Game::update()
 
         display->clearDisplay();
 
-        if (type_of_player == current_player)
+        if (player == current_player)
         {
-                // View of the player current player
+                // Input control
                 if (key == 'L')
                 {
                         flower.rot++;
@@ -51,8 +43,7 @@ void Game::update()
                         flower.last_rm_petal = flower.rot;
                         flower.petals[flower.rot] = 1;
 
-                        check_gameover();
-                        if (isover)
+                        if (check_gameover())
                         {
                                 send_data();
                                 display->display();
@@ -61,16 +52,12 @@ void Game::update()
                 }
                 else if (key == 'A' && remaining_petal_to_remove < 3)
                 {
-                        if (current_player == Player::HOST) current_player = Player::GUEST;
-                        else if (current_player == Player::GUEST) current_player = Player::HOST;
-                        remaining_petal_to_remove = 3;
+                        toggle_player();
                 }
 
                 if (remaining_petal_to_remove <= 0)
                 {
-                        if (current_player == Player::HOST) current_player = Player::GUEST;
-                        else if (current_player == Player::GUEST) current_player = Player::HOST;
-                        remaining_petal_to_remove = 3;
+                        toggle_player();
                 }
 
                 if (key)
@@ -97,6 +84,7 @@ void Game::update()
                 display->println("wait..");
         }
 
+        // Display commun graphics (flower and pointer)
         display->drawBitmap((display->width() - Flower::bitmap_center_radius) / 2, (display->height() - Flower::bitmap_center_radius) / 2, Flower::bitmap_centre, Flower::bitmap_center_radius, Flower::bitmap_center_radius, WHITE);
 
         for (int i = 0; i < flower.petal_number; i++)
@@ -110,9 +98,17 @@ void Game::update()
                 }
         }
 
+        // Pointer
         display->fillTriangle(62, 64, 66, 64, 64, 59, WHITE);
 
         display->display();
+}
+
+void Game::toggle_player()
+{
+        if (current_player == Player::HOST) current_player = Player::GUEST;
+        else if (current_player == Player::GUEST) current_player = Player::HOST;
+        remaining_petal_to_remove = 3;
 }
 
 void Game::draw_rotated_petal(float theta, int xo, int yo)
@@ -146,26 +142,25 @@ void Game::draw_rotated_petal(float theta, int xo, int yo)
         }
 }
 
-void Game::check_gameover()
+bool Game::check_gameover()
 {
         if (flower.remaining_petals <= 0)
         {
-                if (current_player == type_of_player)
+                if (current_player == player)
                 {
                         display->setCursor(4, 2);
                         display->println("you loose");
-                        /* display->setCursor(display->width() - 40, 2); */
-                        /* display->println("loose"); */
                 }
                 else
                 {
                         display->setCursor(4, 2);
                         display->println("you win");
-                        /* display->setCursor(display->width() - 30, 2); */
-                        /* display->println("win"); */
                 }
+
                 isover = true;
         }
+
+        return isover;
 }
 
 int Game::jsoneq(const char *json, jsmntok_t *tok, const char *s) 
@@ -177,7 +172,7 @@ int Game::jsoneq(const char *json, jsmntok_t *tok, const char *s)
         return -1;
 }
 
-void Game::callback(const char *data)
+void Game::tcp_callback(const char *data)
 {
         // Sync the two games
         jsmn_parser p;
@@ -224,5 +219,5 @@ void Game::send_data()
         char buf[64] = {  };
         snprintf(buf, 64, "{\"rot\":\"%i\", \"rem_pet\":\"%i\", \"rm_pet\":\"%i\", \"cur_player\":\"%i\"}", flower.rot, flower.remaining_petals, flower.last_rm_petal, (int)current_player);
 
-        oponnent->println(buf);
+        opponent->println(buf);
 }

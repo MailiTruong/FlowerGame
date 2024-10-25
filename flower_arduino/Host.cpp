@@ -6,24 +6,14 @@
 
 #include "Host.hpp"
 
-Host::Host() : Game()
-{
-
-}
-
-Host::~Host()
-{
-}
-
 void Host::init_wifi(const char *ssid, const char *password)
 {
-        WiFi.softAP(ssid, password, 6, true);
+        player = Player::HOST;
 
+        WiFi.softAP(ssid, password, 6, true);
         Serial.println("Access Point Started");
         Serial.print("IP Address: ");
         Serial.println(WiFi.softAPIP()); 
-
-        type_of_player = Player::HOST;
 
         // Start mDNS
         if (!MDNS.begin("flower")) 
@@ -40,15 +30,14 @@ void Host::init_wifi(const char *ssid, const char *password)
         server.begin();
 }
 
-void Host::update()
+void Host::start()
 {
         WiFiClient client = server.available();
 
         if (client) 
         {
-                oponnent = &client;
+                opponent = &client;
                 client.println("Hello guest !");
-                Game::init();
 
                 while (client.connected()) 
                 {
@@ -57,7 +46,7 @@ void Host::update()
                                 String message = client.readStringUntil('\n');
                                 Serial.println("Received: " + message);
 
-                                Game::callback(message.c_str());
+                                Game::tcp_callback(message.c_str());
                         }
 
                         Game::update();
