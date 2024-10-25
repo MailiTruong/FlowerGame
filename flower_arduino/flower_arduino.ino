@@ -76,18 +76,15 @@ void setup()
 
                         char key = keypad.getKey();
 
-                        if (key == 'D' || key == 'U')
+                        if (key == 'U')
                         {
-                                if (edited == name) 
-                                {
-                                        edited = (char *)code;
-                                        iedited = &icode;
-                                }
-                                else if (edited == code) 
-                                {
                                         edited = (char *)name;
                                         iedited = &iname;
-                                }
+                        }
+                        else if (key == 'D')
+                        {
+                                        edited = (char *)code;
+                                        iedited = &icode;
                         }
                         else if (key == 'B' || key == 'A')
                         {
