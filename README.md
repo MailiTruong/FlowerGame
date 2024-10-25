@@ -2,6 +2,8 @@
 
 A variation of the game of Nim as a networked multiplayer game implemented for ESP-based devices in a flower shape, where the players take turns to remove one, two or three petals until none are left. The looser is the player picking the last petal. This project uses the ESP32 microcontroller and a small OLED display for interactive gameplay.
 
+![demo](./assets/demo.gif)
+
 ## Table of contents
 
 - **Features**
