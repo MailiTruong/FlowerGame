@@ -21,8 +21,8 @@ A variation of the game of Nim as a networked multiplayer game implemented for E
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/flower-game.git
-    cd flower-game
+    git clone https://github.com/MailiTruong/FlowerGame.git   
+    cd FlowerGame
     ```
 
 2. Ensure your ESP32 board is properly connected and recognized by your system.
@@ -40,8 +40,8 @@ A variation of the game of Nim as a networked multiplayer game implemented for E
 :
 2. **Playing the Game**:
     - Use the keypad to interact with the game. Key controls:
-        - **L** and **R**: Rotate through flower petals.
-        - **D**: Remove the selected petal.
+        - **Left** and **Right**: Rotate through flower petals.
+        - **Down**: Remove the selected petal.
         - **A**: Switch turns.
     - The game ends when the last petal is removed, displaying the winner on each screen.
 
